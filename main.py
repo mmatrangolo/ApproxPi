@@ -2,29 +2,45 @@ from math import sqrt
 from math import pow
 import random
 
+from decimal import *
+from decimal import localcontext
 
+def gauss_legendre_approx_pi():
+  # Tell Python to use Decimal inside this block. 
+  # Decimal is type allowing to use numbers with arbitrary precision.
+  with localcontext() as ctx:
+    ctx.prec += 1
 
-def glpi(n):
+    # Initial values
+    a = 1
+    b = 1 / Decimal(2).sqrt()
+    t = 1 / Decimal(4)
+    p = 1
 
-  print('')
+    # Current and previous pi values
+    pi    = None
+    piOld = None
 
-  a = 1
-  b = 1 / sqrt(2)
-  t = 1 / 4
-  p = 1
-    
-  for i in range (1, n + 1):
-    acurr = (a + b) / 2
-    bcurr = sqrt(a * b)
-    tcurr = t - p * pow((a - acurr), 2)
-    pcurr = 2 * p
-    pi = pow((acurr + bcurr), 2) / (4 * tcurr)
-    print(str(i) + '   ' + str(pi))
-    
-    a = acurr
-    b = bcurr
-    t = tcurr
-    p = pcurr
+    # Num of required iterations
+    n = 0
+
+    # Stop when pi and piOld are equals that means that the 
+    # digits of pi are accurate up until the amount of printed 
+    # digits because from that point on the algorithm will keep
+    # producing the same value of pi.
+    while pi == None or pi != piOld:
+      n += 1 # Increment the num of total iterations required
+
+      an = (a + b) / 2
+      b = (a * b).sqrt()
+      t -= p * (a - an) * (a - an)
+      a, p = an, 2 * p
+
+      piOld = pi
+      pi = (a + b) * (a + b) / (4 * t)
+
+  print("Needed iterations = " + str(n))
+  return pi
 
 def montecarlo_approx_pi(n):
   inside = 0 # number of dots in the circle
@@ -57,11 +73,13 @@ piIn = (int(input()))
 
 if piIn == 1:
   print('')
-  print('How many Iterations would you like to calculate?')
+  print('How many digits would you like to calculate?')
   print('')
-  iter = int(input())
+  precision = int(input())
   print('')
-  glpi(iter)
+
+  getcontext().prec = precision
+  print(str(gauss_legendre_approx_pi()))
 
 if piIn == 2:
   print("pi =" + str(montecarlo_approx_pi(100000000)))
