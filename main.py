@@ -26,32 +26,27 @@ def glpi(n):
     t = tcurr
     p = pcurr
 
+def montecarlo_approx_pi(n):
+  inside = 0 # number of dots in the circle
+  total  = 0 # total number of events
 
+  # Execute n experiments
+  while total <= n:
 
-def mcpi():
- 
-  INTERVAL = 3000
- 
-  circle_points = 0
-  square_points = 0
+    # Generating random dots with coordinates between -1 and 1
+    x = random.uniform(-1, 1)
+    y = random.uniform(-1, 1)
 
-  for i in range(INTERVAL**2):
+    # Increment the 'inside' counter if the dot landed in the circle
+    if sqrt(x**2 + y**2) <= 1:
+      inside += 1
 
-    rand_x = random.uniform(-1, 1)
-    rand_y = random.uniform(-1, 1)
- 
-    origin_dist = rand_x**2 + rand_y**2
- 
-    if origin_dist <= 1:
-        circle_points += 1
- 
-    square_points += 1
- 
-    pi = 4 * circle_points / square_points
- 
-  print("Final Estimation of Pi=", pi)
+    total += 1
 
+  # Calculate pi from the prob of dot landing in the cirlce
+  pi = 4 * (inside / total) 
 
+  return pi
 
 print('Choose a Pi between:')
 print('')
@@ -60,19 +55,13 @@ print('2. Monte Carlo Algorithm')
 print('')
 piIn = (int(input()))
 
-
-
 if piIn == 1:
   print('')
   print('How many Iterations would you like to calculate?')
   print('')
   iter = int(input())
   print('')
-  
   glpi(iter)
 
-
-
 if piIn == 2:
-  print('')
-  mcpi()
+  print("pi =" + str(montecarlo_approx_pi(100000000)))
